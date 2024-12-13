@@ -1,13 +1,20 @@
 "use client";
 import React, { useState } from "react";
 import ItemDelete from "./ItemDelete";
+import ItemEdit from "./ItemEdit";
 
 const Item = ({ id, title }: { id: number; title: string }) => {
-  const [popup, setPopup] = useState<boolean>(false);
+  const [delPopup, setDelPopup] = useState<boolean>(false);
+  const [editPopup, setEditPopup] = useState<boolean>(false);
+  const [editedTitle, setEditedTitle] = useState<string>(title);
 
   const handleDelete = async () => {
-    setPopup(false);
+    setDelPopup(false);
     await ItemDelete(id);
+  };
+  const handleEdit = async () => {
+    setEditPopup(false);
+    await ItemEdit(id, editedTitle);
   };
 
   return (
@@ -15,7 +22,10 @@ const Item = ({ id, title }: { id: number; title: string }) => {
       <div className="flex justify-between items-center">
         <h3 className="text-xl font-medium">{title}</h3>
         <div className="flex justify-end items-center space-x-3">
-          <button className="btn btn-sm btn-square">
+          <button
+            className="btn btn-sm btn-square"
+            onClick={() => setEditPopup(true)}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -31,10 +41,38 @@ const Item = ({ id, title }: { id: number; title: string }) => {
               <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
             </svg>
           </button>
-
+          {editPopup ? (
+            <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center z-50 bg-black bg-opacity-25 backdrop-blur-sm">
+              <div className="card bg-base-100 w-72 shadow-xl">
+                <div className="card-body text-center space-y-5">
+                  <p className="text-xl font-bold">Editing</p>
+                  <input
+                    type="text"
+                    value={editedTitle}
+                    onChange={(e) => setEditedTitle(e.target.value)}
+                    className="input input-bordered w-full max-w-xs"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => setEditPopup(false)}
+                      className="btn btn-sm"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => handleEdit()}
+                      className="btn btn-sm btn-primary"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
           <button
             className="btn btn-sm btn-square"
-            onClick={() => setPopup(true)}
+            onClick={() => setDelPopup(true)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -53,14 +91,14 @@ const Item = ({ id, title }: { id: number; title: string }) => {
               <line x1="14" y1="11" x2="14" y2="17"></line>
             </svg>
           </button>
-          {popup ? (
+          {delPopup ? (
             <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center z-50 bg-black bg-opacity-25 backdrop-blur-sm">
               <div className="card bg-base-100 w-72 shadow-xl">
                 <div className="card-body text-center space-y-5">
                   <p className="text-xl font-bold">Are you sure?</p>
-                  <div className="space-x-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <button
-                      onClick={() => setPopup(false)}
+                      onClick={() => setDelPopup(false)}
                       className="btn btn-sm"
                     >
                       Cancel
