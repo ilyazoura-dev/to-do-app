@@ -1,6 +1,7 @@
 "use client";
 import React, { FormEvent, useState } from "react";
 import AddToDo from "./AddToDo";
+import { redirect } from "next/navigation";
 
 const New = () => {
   const [title, setTitle] = useState<string>("");
@@ -13,6 +14,9 @@ const New = () => {
     if (res.message) {
       setErr(res.message);
     }
+  };
+  const handleCancel = async () => {
+    redirect("/");
   };
 
   return (
@@ -29,7 +33,12 @@ const New = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <input type="submit" className="btn btn-primary" />
+          <div className="grid grid-cols-2 gap-3">
+            <button onClick={() => handleCancel()} className="btn">
+              Cancel
+            </button>
+            <input type="submit" className="btn btn-primary" />
+          </div>
           <p className="text-red-500 text-center">{err}</p>
         </form>
       </div>
